@@ -6,10 +6,21 @@ namespace NorthWindAPI.Services.Implementations
 {
     public class CustomerService : ICustomerService
     {
+        private readonly NorthwindContext _context;
+        public CustomerService(NorthwindContext context)
+        {
+            _context = context;
+        }
+
         public void CreateCustomer(Customer customer)
         {
-            using var context = new NorthwindContext();
+            if (customer is null)
+            {
+                throw new ArgumentNullException("Передано пустое значение");
+            }
 
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
         }
 
         public void DeleteCustomer(string id)
@@ -19,8 +30,7 @@ namespace NorthWindAPI.Services.Implementations
 
         public IEnumerable<Customer> GetAllCustomers()
         {
-            using var context = new NorthwindContext();
-            return context.Customers.ToList();
+            return _context.Customers.ToList();
         }
 
         public Customer GetCustomerById(string id)
@@ -37,8 +47,7 @@ namespace NorthWindAPI.Services.Implementations
 
         public CustomerDTO GetGeneralInfoCustomerById(string id)
         {
-            using var context = new NorthwindContext();
-            var customer = context.Customers.SingleOrDefault(c => c.CustomerId == id);
+            var customer = _context.Customers.SingleOrDefault(c => c.CustomerId == id);
             return customer is not null ?
                 new CustomerDTO { CompanyName = customer.CompanyName, Phone = customer.Phone } :
                 null;
@@ -46,8 +55,7 @@ namespace NorthWindAPI.Services.Implementations
 
         public CustomerDTO GetGeneralInfoCustomerByName(string name)
         {
-            using var context = new NorthwindContext();
-            var customer = context.Customers.SingleOrDefault(c => c.CompanyName == name);
+            var customer = _context.Customers.SingleOrDefault(c => c.CompanyName == name);
             return customer is not null ?
                 new CustomerDTO { CompanyName = customer.CompanyName, Phone = customer.Phone } :
                 null;
