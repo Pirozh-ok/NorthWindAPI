@@ -1,4 +1,5 @@
-﻿using NorthWindAPI.Models;
+﻿using NorthWindAPI.DTOs;
+using NorthWindAPI.Models;
 
 namespace NorthWindAPI.Services.Interfaces
 {
@@ -7,8 +8,8 @@ namespace NorthWindAPI.Services.Interfaces
         IEnumerable<Customer> GetAllCustomers();
         Customer GetCustomerById(string id);
         Customer GetCustomerByName(string name);
-        Customer GetGeneralInfoCustomerById(string id);
-        Customer GetGeneralInfoCustomerByName(string name);
+        CustomerDTO GetGeneralInfoCustomerById(string id);
+        CustomerDTO GetGeneralInfoCustomerByName(string name);
         void CreateCustomer(Customer customer);
         void UpdateCustomer(Customer customer); 
         void DeleteCustomer(string id);

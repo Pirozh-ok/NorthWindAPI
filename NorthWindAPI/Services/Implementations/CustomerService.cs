@@ -1,4 +1,5 @@
-﻿using NorthWindAPI.Models;
+﻿using NorthWindAPI.DTOs;
+using NorthWindAPI.Models;
 using NorthWindAPI.Services.Interfaces;
 
 namespace NorthWindAPI.Services.Implementations
@@ -24,22 +25,32 @@ namespace NorthWindAPI.Services.Implementations
 
         public Customer GetCustomerById(string id)
         {
-            throw new NotImplementedException();
+            using var context = new NorthwindContext();
+            return context.Customers.SingleOrDefault(c => c.CustomerId == id);
         }
 
         public Customer GetCustomerByName(string name)
         {
-            throw new NotImplementedException();
+            using var context = new NorthwindContext();
+            return context.Customers.SingleOrDefault(c => c.ContactName == name);
         }
 
-        public Customer GetGeneralInfoCustomerById(string id)
+        public CustomerDTO GetGeneralInfoCustomerById(string id)
         {
-            throw new NotImplementedException();
+            using var context = new NorthwindContext();
+            var customer = context.Customers.SingleOrDefault(c => c.CustomerId == id);
+            return customer is not null ?
+                new CustomerDTO { CompanyName = customer.CompanyName, Phone = customer.Phone } :
+                null;
         }
 
-        public Customer GetGeneralInfoCustomerByName(string name)
+        public CustomerDTO GetGeneralInfoCustomerByName(string name)
         {
-            throw new NotImplementedException();
+            using var context = new NorthwindContext();
+            var customer = context.Customers.SingleOrDefault(c => c.CompanyName == name);
+            return customer is not null ?
+                new CustomerDTO { CompanyName = customer.CompanyName, Phone = customer.Phone } :
+                null;
         }
 
         public void UpdateCustomer(Customer customer)

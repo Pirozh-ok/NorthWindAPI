@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using NorthWindAPI.Models;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using System.Text.Json;
-using NorthWindAPI.Services.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using NorthWindAPI.Services.Interfaces;
 
 namespace NorthWindAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/customers/")]
     [ApiController]
     public class CustomersController : ControllerBase
     {
@@ -22,29 +18,45 @@ namespace NorthWindAPI.Controllers
         public IActionResult Get()
         {
             var customers = _customerService.GetAllCustomers();
-
-            if(customers is null || customers.Count() == 0)
-                return NotFound(JsonConvert.SerializeObject("Ничего не найдено",Formatting.Indented));
-
-            return Ok(JsonConvert.SerializeObject(customers, Formatting.Indented));
+            return customers is null || customers.Count() == 0 ?
+                 NotFound(JsonConvert.SerializeObject("Ничего не найдено",Formatting.Indented)):
+                 Ok(JsonConvert.SerializeObject(customers, Formatting.Indented));
         }
 
         [HttpGet("{id}")]
-        public string GetById(string id)
+        public IActionResult GetById(string id)
         {
-            /*using var context = new northwindContext();
-            var customer = context.Customers.SingleOrDefault(c => c.CustomerId == id);
-            return customer is null ? JsonSerializer.Serialize("Нет результатов") : JsonSerializer.Serialize(customer); */
-            return null;
+            var customer = _customerService.GetCustomerById(id);
+            return customer is null ?
+                NotFound(JsonConvert.SerializeObject("Ничего не найдено", Formatting.Indented)) :
+                Ok(JsonConvert.SerializeObject(customer, Formatting.Indented));
         }
 
-        [HttpGet]
-        public List<Customer> GetName([FromQuery] string company, [FromQuery] string? a)
+        [HttpGet("name/{name}")]
+        public IActionResult GetByName(string name)
         {
-            /*using var context = new northwindContext();
-            var customers = context.Customers.Where(c=> c.CompanyName == company).ToList();
-            return customers.Count() > 0 ? customers : null;*/
-            return null;
+            var customer = _customerService.GetCustomerByName(name);
+            return customer is null ? 
+                NotFound(JsonConvert.SerializeObject("Ничего не найдено", Formatting.Indented)):
+                Ok(JsonConvert.SerializeObject(customer, Formatting.Indented));
+        }
+
+        [HttpGet("general/name/{name}")]
+        public IActionResult GetGeneralByName(string name)
+        {
+            var customer = _customerService.GetGeneralInfoCustomerByName(name);
+            return customer is null ?
+                NotFound(JsonConvert.SerializeObject("Ничего не найдено", Formatting.Indented)) :
+                Ok(JsonConvert.SerializeObject(customer, Formatting.Indented));
+        }
+
+        [HttpGet("general/{id}")]
+        public IActionResult GetGeneralById(string id)
+        {
+            var customer = _customerService.GetGeneralInfoCustomerById(id);
+            return customer is null ?
+                NotFound(JsonConvert.SerializeObject("Ничего не найдено", Formatting.Indented)) :
+                Ok(JsonConvert.SerializeObject(customer, Formatting.Indented));
         }
     }
 }
