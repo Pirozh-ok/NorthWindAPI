@@ -7,6 +7,7 @@ namespace NorthWindAPI.Models
 {
     public partial class NorthwindContext : DbContext
     {
+        private string _connectionString;
         public NorthwindContext()
         {
         }
@@ -23,9 +24,16 @@ namespace NorthWindAPI.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            var builder = new ConfigurationBuilder();
+            builder.SetBasePath(Directory.GetCurrentDirectory());
+            builder.AddJsonFile("appsettings.json");
+            var config = builder.Build();
+            _connectionString = config.GetConnectionString("DefaultConnection");
+
+
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server = (localdb)\\mssqllocaldb; Database = northwind; Persist Security Info = false; User ID = 'sa'; Password = 'sa'; MultipleActiveResultSets = True; Trusted_Connection = False;");
+                optionsBuilder.UseSqlServer(_connectionString);
             }
         }
 
