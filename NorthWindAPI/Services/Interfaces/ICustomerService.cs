@@ -14,5 +14,6 @@ namespace NorthWindAPI.Services.Interfaces
         void CreateCustomer(Customer customer);
         void UpdateCustomer(Customer customer); 
         void DeleteCustomer(string id);
+        IEnumerable<Order> GetOrdersByCustomerId(string id);
     }
 }

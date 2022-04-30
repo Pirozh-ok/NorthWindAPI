@@ -2,6 +2,7 @@
 using NorthWindAPI.Models;
 using NorthWindAPI.Paginations;
 using NorthWindAPI.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace NorthWindAPI.Services.Implementations
 {
@@ -26,7 +27,15 @@ namespace NorthWindAPI.Services.Implementations
 
         public void DeleteCustomer(string id)
         {
-            throw new NotImplementedException();
+            var customer = _context.Customers.SingleOrDefault(c => c.CustomerId == id);
+
+            if (customer is null)
+            {
+                throw new Exception("Покупатель не найден!");
+            }
+
+            _context.Customers.Remove(customer);
+            _context.SaveChanges();
         }
 
         public IEnumerable<Customer> GetAllCustomers(CustomerPagination filter)
@@ -34,6 +43,7 @@ namespace NorthWindAPI.Services.Implementations
             return _context.Customers
                             .Skip((filter.PageNumber - 1) * filter.PageSize)
                             .Take(filter.PageSize)
+                            //.Include(c => c.Orders)
                             .ToList();
         }
 
@@ -63,6 +73,11 @@ namespace NorthWindAPI.Services.Implementations
             return customer is not null ?
                 new CustomerDTO { CompanyName = customer.CompanyName, Phone = customer.Phone } :
                 null;
+        }
+
+        public IEnumerable<Order> GetOrdersByCustomerId(string id)
+        {
+            return _context.Orders.Where(c => c.CustomerId == id);
         }
 
         public void UpdateCustomer(Customer customer)
