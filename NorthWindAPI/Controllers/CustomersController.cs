@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NorthWindAPI.Models;
+using NorthWindAPI.Paginations;
 using NorthWindAPI.Services.Interfaces;
 
 namespace NorthWindAPI.Controllers
@@ -17,9 +18,15 @@ namespace NorthWindAPI.Controllers
 
         // GET api/customers
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] CustomerPagination filter)
         {
-            var customers = _customerService.GetAllCustomers();
+            var validFilter = new PaginationFilter() 
+            { 
+                PageNumber = filter.PageNumber,
+                PageSize = filter.PageSize 
+            };
+
+            var customers = _customerService.GetAllCustomers(filter);
             return customers is null || customers.Count() == 0 ?
                  NotFound(JsonConvert.SerializeObject("Ничего не найдено",Formatting.Indented)):
                  Ok(JsonConvert.SerializeObject(customers, Formatting.Indented));
@@ -76,6 +83,42 @@ namespace NorthWindAPI.Controllers
 
                 _customerService.CreateCustomer(customer);
                 return StatusCode(201);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT api/customers/
+        [HttpPut]
+        public IActionResult UpdateCustomer([FromBody] Customer customer)
+        {
+            try
+            {
+                if (customer is null)
+                    BadRequest("Передано пустое значение");
+
+                _customerService.UpdateCustomer(customer);
+                return StatusCode(204);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // DELETE api/customers/
+        [HttpDelete]
+        public IActionResult DeleteCustomer([FromBody] Customer customer)
+        {
+            try
+            {
+                if (customer is null)
+                    BadRequest("Передано пустое значение");
+
+                _customerService.CreateCustomer(customer);
+                return StatusCode(204);
             }
             catch (Exception ex)
             {

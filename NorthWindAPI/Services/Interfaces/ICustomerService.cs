@@ -1,11 +1,12 @@
 ﻿using NorthWindAPI.DTOs;
 using NorthWindAPI.Models;
+using NorthWindAPI.Paginations;
 
 namespace NorthWindAPI.Services.Interfaces
 {
     public interface ICustomerService
     {
-        IEnumerable<Customer> GetAllCustomers();
+        IEnumerable<Customer> GetAllCustomers(CustomerPagination filter);
         Customer GetCustomerById(string id);
         Customer GetCustomerByName(string name);
         CustomerDTO GetGeneralInfoCustomerById(string id);

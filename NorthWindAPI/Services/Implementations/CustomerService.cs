@@ -1,5 +1,6 @@
 ﻿using NorthWindAPI.DTOs;
 using NorthWindAPI.Models;
+using NorthWindAPI.Paginations;
 using NorthWindAPI.Services.Interfaces;
 
 namespace NorthWindAPI.Services.Implementations
@@ -28,9 +29,12 @@ namespace NorthWindAPI.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Customer> GetAllCustomers()
+        public IEnumerable<Customer> GetAllCustomers(CustomerPagination filter)
         {
-            return _context.Customers.ToList();
+            return _context.Customers
+                            .Skip((filter.PageNumber - 1) * filter.PageSize)
+                            .Take(filter.PageSize)
+                            .ToList();
         }
 
         public Customer GetCustomerById(string id)
@@ -63,7 +67,28 @@ namespace NorthWindAPI.Services.Implementations
 
         public void UpdateCustomer(Customer customer)
         {
-            throw new NotImplementedException();
+            if (customer is null)
+            {
+                throw new ArgumentNullException("Передано пустое значение");
+            }
+
+            var updateCustomer = _context.Customers.SingleOrDefault(c => c.CustomerId == customer.CustomerId);
+
+            if(updateCustomer is null)
+            {
+                throw new Exception("Не удалось найти пользователя");
+            }
+
+            updateCustomer.CompanyName = customer.CompanyName;
+            updateCustomer.ContactName = customer.ContactName;
+            updateCustomer.ContactTitle = customer.ContactTitle;
+            updateCustomer.Address = customer.Address;
+            updateCustomer.City = customer.City;
+            updateCustomer.Country = customer.Country;
+            updateCustomer.Phone = customer.Phone;
+            updateCustomer.Fax = customer.Fax;
+
+            _context.SaveChanges();
         }
     }
 }
