@@ -11,7 +11,6 @@ namespace NorthWindAPI.Controllers
     public class CustomersController: ControllerBase
     {
         private readonly ICustomerService _customerService;
-        private string _notFoundMessage = "Ничего не найдено";
         public CustomersController(ICustomerService customerService)
         {
             _customerService = customerService;
@@ -19,32 +18,18 @@ namespace NorthWindAPI.Controllers
 
         // GET api/customers
         [HttpGet]
-        public IActionResult GetAllCustomers([FromQuery] CustomerPagination filter)
+        public IActionResult GetAllCustomers([FromQuery] CustomerParameters filter)
         {
-            var validFilter = new PaginationFilter()
+/*            var validFilter = new CustomerParameters()
             {
                 PageNumber = filter.PageNumber,
                 PageSize = filter.PageSize
-            };
+            };*/
 
-            var customers = _customerService.GetAllCustomers(filter);
-
-            if (filter.Sort == "desc")
-                customers = customers.OrderByDescending(c => c.CompanyName);
-            else customers = customers.OrderBy(c => c.CompanyName);
-
-            if (filter.Format == "xml")
-            {
-                return customers is null || customers.Count() == 0 ?
-                    NotFound(Converter.ToXml(_notFoundMessage)):
-                 Ok(Converter.ToXml(customers.ToList()));
-            }
-
-            return customers is null || customers.Count() == 0 ?
-                 NotFound(Converter.ToJson(_notFoundMessage)) :
-                 Ok(Converter.ToJson(customers.ToList()));
+            filter.Collection = _customerService.GetAllCustomers();
+            return Ok(filter.ResultProcessing());
         }
-
+/*
         // GET api/customers/anton
         [HttpGet("{id}")]
         public IActionResult GetById(string id, [FromQuery] CustomerPagination filter)
@@ -137,7 +122,7 @@ namespace NorthWindAPI.Controllers
                 NotFound(Converter.ToJson(_notFoundMessage)) :
                 Ok(Converter.ToJson(orders));
         }
-
+*/
         // POST api/customers/
         [HttpPost]
         public IActionResult CreateCustomer([FromBody] Customer customer)

@@ -39,13 +39,9 @@ namespace NorthWindAPI.Services.Implementations
             _context.SaveChanges();
         }
 
-        public IEnumerable<Customer> GetAllCustomers(CustomerPagination filter)
+        public IQueryable<Customer> GetAllCustomers()
         {
-            return _context.Customers
-                            .Skip((filter.PageNumber - 1) * filter.PageSize)
-                            .Take(filter.PageSize)
-                            //.Include(c => c.Orders)
-                            .ToList();
+            return _context.Customers;
         }
 
         public IEnumerable<Customer> GetAllCustomersWithOrders()

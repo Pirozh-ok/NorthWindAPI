@@ -16,10 +16,10 @@ namespace NorthWindAPI.Controllers
             _productService = productService;
         }
 
-        [HttpGet]
+        /*[HttpGet]
         public IActionResult GetAllProduct([FromQuery] ProductPagination filter)
         {
-            var validFilter = new PaginationFilter()
+            var validFilter = new QueryParameters()
             {
                 PageNumber = filter.PageNumber,
                 PageSize = filter.PageSize
@@ -41,6 +41,6 @@ namespace NorthWindAPI.Controllers
             return products is null || products.Count() == 0 ?
                  NotFound(Converter.ToJson(_notFoundMessage)) :
                  Ok(Converter.ToJson(products.ToList()));
-        }
+        }*/
     }
 }

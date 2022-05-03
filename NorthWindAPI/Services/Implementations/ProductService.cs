@@ -28,7 +28,7 @@ namespace NorthWindAPI.Services.Implementations
             _context.SaveChanges();
         }
 
-        public IEnumerable<Product> GetAllProducts(PaginationFilter filter)
+        public IEnumerable<Product> GetAllProducts(QueryParameters filter)
         {
             return _context.Products
                             .Skip((filter.PageNumber - 1) * filter.PageSize)

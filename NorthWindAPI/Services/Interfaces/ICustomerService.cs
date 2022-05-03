@@ -6,7 +6,7 @@ namespace NorthWindAPI.Services.Interfaces
 {
     public interface ICustomerService
     {
-        IEnumerable<Customer> GetAllCustomers(CustomerPagination filter);
+        IQueryable<Customer> GetAllCustomers();
         IEnumerable<Customer> GetAllCustomersWithOrders();
         Customer GetCustomerById(string id);
         Customer GetCustomerByName(string name);

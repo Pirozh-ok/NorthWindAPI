@@ -1,6 +1,6 @@
-﻿namespace NorthWindAPI.Paginations
+﻿/*namespace NorthWindAPI.Paginations
 {
-    public class OrderPagination:PaginationFilter
+    public class OrderPagination:QueryParameters
     {
         private string _sort = "asc";
         private string _format = "json";
@@ -29,3 +29,4 @@
         }
     }
 }
+*/
