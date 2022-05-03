@@ -117,7 +117,7 @@ namespace NorthWindAPI.Services.Implementations
                 null;
         }
 
-        public IEnumerable<Order> GetOrdersByCustomerId(string id)
+        public IQueryable<Order> GetOrdersByCustomerId(string id)
         {
             return _context.Orders
                 .Where(c => c.CustomerId == id);

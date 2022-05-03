@@ -11,6 +11,7 @@ namespace NorthWindAPI.Controllers
     public class CustomersController: ControllerBase
     {
         private readonly ICustomerService _customerService;
+        private readonly string _notFoundMessage = "Ничего не найдено";
         public CustomersController(ICustomerService customerService)
         {
             _customerService = customerService;
@@ -20,23 +21,17 @@ namespace NorthWindAPI.Controllers
         [HttpGet]
         public IActionResult GetAllCustomers([FromQuery] CustomerParameters filter)
         {
-/*            var validFilter = new CustomerParameters()
-            {
-                PageNumber = filter.PageNumber,
-                PageSize = filter.PageSize
-            };*/
-
             filter.Collection = _customerService.GetAllCustomers();
             return Ok(filter.ResultProcessing());
         }
-/*
+
         // GET api/customers/anton
         [HttpGet("{id}")]
-        public IActionResult GetById(string id, [FromQuery] CustomerPagination filter)
+        public IActionResult GetById(string id, [FromQuery] string? format)
         {
             var customer = _customerService.GetCustomerById(id);
 
-            if (filter.Format == "xml")
+            if (format == "xml")
             {
                 return customer is null ?
                     NotFound(Converter.ToXml(_notFoundMessage)) :
@@ -47,14 +42,14 @@ namespace NorthWindAPI.Controllers
                 NotFound(Converter.ToJson(_notFoundMessage)):
                 Ok(Converter.ToJson(customer));
         }
-
+        
         // GET api/customers/name/Antonio Moreno
         [HttpGet("name/{name}")]
-        public IActionResult GetByName(string name, [FromQuery] CustomerPagination filter)
+        public IActionResult GetByName(string name, [FromQuery] string? format)
         {
             var customer = _customerService.GetCustomerByName(name);
 
-            if (filter.Format == "xml")
+            if (format == "xml")
             {
                 return customer is null ?
                     NotFound(Converter.ToXml(_notFoundMessage)) :
@@ -68,11 +63,11 @@ namespace NorthWindAPI.Controllers
 
         // GET api/customers/general/name/Around the Horn
         [HttpGet("general/name/{name}")]
-        public IActionResult GetGeneralByName(string name, [FromQuery] CustomerPagination filter)
+        public IActionResult GetGeneralByName(string name, [FromQuery] string? format)
         {
             var customer = _customerService.GetGeneralInfoCustomerByName(name);
 
-            if (filter.Format == "xml")
+            if (format == "xml")
             {
                 return customer is null ?
                     NotFound(Converter.ToXml(_notFoundMessage)) :
@@ -86,11 +81,11 @@ namespace NorthWindAPI.Controllers
 
         // GET api/customers/general/arout
         [HttpGet("general/{id}")]
-        public IActionResult GetGeneralById(string id, [FromQuery] CustomerPagination filter)
+        public IActionResult GetGeneralById(string id, [FromQuery] string? format)
         {
             var customer = _customerService.GetGeneralInfoCustomerById(id);
 
-            if (filter.Format == "xml")
+            if (format == "xml")
             {
                 return customer is null ?
                     NotFound(Converter.ToXml(_notFoundMessage)) :
@@ -104,25 +99,12 @@ namespace NorthWindAPI.Controllers
 
         // GET api/customers/VANYA/orders
         [HttpGet("{id}/orders")]
-        public IActionResult GetOrdersByCustomerId(string id, [FromQuery] CustomerPagination filter)
+        public IActionResult GetOrdersByCustomerId(string id, [FromQuery] OrderParameters filter)
         {
-            var orders = _customerService.GetOrdersByCustomerId(id);
-
-            if (filter.Sort == "desc")
-                orders = orders.OrderByDescending(o => o.OrderDate);
-
-            if (filter.Format == "xml")
-            {
-                return orders is null || orders.Count() < 1  ?
-                    NotFound(Converter.ToXml(_notFoundMessage)) :
-                 Ok(Converter.ToXml(orders));
-            }
-
-            return orders is null || orders.Count() < 1 ?
-                NotFound(Converter.ToJson(_notFoundMessage)) :
-                Ok(Converter.ToJson(orders));
+            filter.Collection = _customerService.GetOrdersByCustomerId(id);
+            return Ok(filter.ResultProcessing());
         }
-*/
+
         // POST api/customers/
         [HttpPost]
         public IActionResult CreateCustomer([FromBody] Customer customer)
