@@ -9,6 +9,6 @@ namespace NorthWindAPI.Services.Interfaces
         Product GetProductByName(string name);
         void CreateProduct(Product product);
         void UpdateProduct(Product product);
-        void DeleteProduct(string id);
+        void DeleteProduct(int id);
     }
 }

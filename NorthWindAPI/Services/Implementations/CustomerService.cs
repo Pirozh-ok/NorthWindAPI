@@ -27,7 +27,8 @@ namespace NorthWindAPI.Services.Implementations
 
         public void DeleteCustomer(string id)
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.CustomerId == id);
+            var customer = _context.Customers
+                .SingleOrDefault(c => c.CustomerId == id);
 
             if (customer is null)
             {
@@ -47,21 +48,64 @@ namespace NorthWindAPI.Services.Implementations
                             .ToList();
         }
 
+        public IEnumerable<Customer> GetAllCustomersWithOrders()
+        {
+            return _context.Customers
+                            .Include(c => c.Orders)
+                            .ToList();
+        }
+
         public Customer GetCustomerById(string id)
         {
-            using var context = new NorthwindContext();
-            return context.Customers.SingleOrDefault(c => c.CustomerId == id);
+            var customer = _context.Customers
+                .SingleOrDefault(c => c.CustomerId == id);
+
+            if (customer is null)
+                throw new Exception("Покупатель не найден");
+
+            return customer;
+        }
+
+        public Customer GetCustomerByIdWithOrders(string id)
+        {
+            var customer = _context.Customers
+                .Include(c => c.Orders)
+                .SingleOrDefault(c => c.CustomerId == id);
+
+            if (customer is null)
+                throw new Exception("Покупатель не найден");
+
+            return customer;
         }
 
         public Customer GetCustomerByName(string name)
         {
-            using var context = new NorthwindContext();
-            return context.Customers.SingleOrDefault(c => c.ContactName == name);
+            var customer = _context.Customers
+                .SingleOrDefault(c => c.ContactName == name);
+
+            if (customer is null)
+                throw new Exception("Покупатель не найден");
+
+            return customer; 
+        }
+
+        public Customer GetCustomerByNameWithOrders(string name)
+        {
+            var customer = _context.Customers
+                .Include(c => c.Orders)
+                .SingleOrDefault(c => c.ContactName == name);
+
+            if (customer is null)
+                throw new Exception("Покупатель не найден");
+
+            return customer;
         }
 
         public CustomerDTO GetGeneralInfoCustomerById(string id)
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.CustomerId == id);
+            var customer = _context.Customers
+                .SingleOrDefault(c => c.CustomerId == id);
+
             return customer is not null ?
                 new CustomerDTO { CompanyName = customer.CompanyName, Phone = customer.Phone } :
                 null;
@@ -69,7 +113,9 @@ namespace NorthWindAPI.Services.Implementations
 
         public CustomerDTO GetGeneralInfoCustomerByName(string name)
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.CompanyName == name);
+            var customer = _context.Customers
+                .SingleOrDefault(c => c.CompanyName == name);
+
             return customer is not null ?
                 new CustomerDTO { CompanyName = customer.CompanyName, Phone = customer.Phone } :
                 null;
@@ -77,7 +123,8 @@ namespace NorthWindAPI.Services.Implementations
 
         public IEnumerable<Order> GetOrdersByCustomerId(string id)
         {
-            return _context.Orders.Where(c => c.CustomerId == id);
+            return _context.Orders
+                .Where(c => c.CustomerId == id);
         }
 
         public void UpdateCustomer(Customer customer)
@@ -87,21 +134,22 @@ namespace NorthWindAPI.Services.Implementations
                 throw new ArgumentNullException("Передано пустое значение");
             }
 
-            var updateCustomer = _context.Customers.SingleOrDefault(c => c.CustomerId == customer.CustomerId);
+            var updateToCustomer = _context.Customers
+                .SingleOrDefault(c => c.CustomerId == customer.CustomerId);
 
-            if(updateCustomer is null)
+            if(updateToCustomer is null)
             {
-                throw new Exception("Не удалось найти пользователя");
+                throw new Exception("Пользователь не найден");
             }
 
-            updateCustomer.CompanyName = customer.CompanyName;
-            updateCustomer.ContactName = customer.ContactName;
-            updateCustomer.ContactTitle = customer.ContactTitle;
-            updateCustomer.Address = customer.Address;
-            updateCustomer.City = customer.City;
-            updateCustomer.Country = customer.Country;
-            updateCustomer.Phone = customer.Phone;
-            updateCustomer.Fax = customer.Fax;
+            updateToCustomer.CompanyName = customer.CompanyName;
+            updateToCustomer.ContactName = customer.ContactName;
+            updateToCustomer.ContactTitle = customer.ContactTitle;
+            updateToCustomer.Address = customer.Address;
+            updateToCustomer.City = customer.City;
+            updateToCustomer.Country = customer.Country;
+            updateToCustomer.Phone = customer.Phone;
+            updateToCustomer.Fax = customer.Fax;
 
             _context.SaveChanges();
         }

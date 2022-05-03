@@ -12,12 +12,20 @@ namespace NorthWindAPI.Services.Implementations
         }
         public void CreateProduct(Product product)
         {
-            throw new NotImplementedException();
+            if (product is null)
+            {
+                throw new ArgumentNullException("Передано пустое значение!");
+            }
+
+            _context.Products.Add(product);
+            _context.SaveChanges();
         }
 
-        public void DeleteProduct(string id)
+        public void DeleteProduct(int id)
         {
-            throw new NotImplementedException();
+            var product = GetProductById(id);
+            _context.Products.Remove(product);
+            _context.SaveChanges();
         }
 
         public IEnumerable<Product> GetAllProducts(PaginationFilter filter)
@@ -30,17 +38,49 @@ namespace NorthWindAPI.Services.Implementations
 
         public Product GetProductById(int id)
         {
-            return new Product();
+            var product = _context.Products
+                .SingleOrDefault(p => p.ProductId == id);
+
+            if (product is null)
+            {
+                throw new Exception("Продукт не найден");
+            }
+
+            return product;
         }
 
         public Product GetProductByName(string name)
         {
-            throw new NotImplementedException();
+            var product = _context.Products
+                .SingleOrDefault(p => p.ProductName == name);
+
+            if (product is null)
+            {
+                throw new Exception("Продукт не найден");
+            }
+
+            return product;
         }
 
         public void UpdateProduct(Product product)
         {
-            throw new NotImplementedException();
+
+            if (product is null)
+            {
+                throw new ArgumentNullException("Передано пустое значение");
+            }
+
+            var updateToProduct = _context.Products.SingleOrDefault(p => p.ProductId == product.ProductId);
+
+            if (updateToProduct is null)
+            {
+                throw new Exception("Пользователь не найден");
+            }
+
+            updateToProduct.ProductName = product.ProductName;
+            updateToProduct.UnitPrice = product.UnitPrice;
+            updateToProduct.OrderDetails = product.OrderDetails;
+            _context.SaveChanges();
         }
     }
 }
