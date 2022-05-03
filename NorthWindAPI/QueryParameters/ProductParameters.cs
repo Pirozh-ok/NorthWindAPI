@@ -31,7 +31,10 @@ namespace NorthWindAPI.Paginations
             Sorting();
 
             if (Collection.Count() <= 0)
+            {
+                IsSuccess = false;
                 return Format == "xml" ? Converter.ToXml(_notFoundMessage) : Converter.ToJson(_notFoundMessage);
+            }
 
             return Formatting();
         }

@@ -8,6 +8,7 @@
         private string _sort = "asc";
         private string _format = "json";
         protected string _notFoundMessage = "Ничего не найдено";
+        public bool IsSuccess { get; set; } = true;
         public int PageNumber
         {
             get

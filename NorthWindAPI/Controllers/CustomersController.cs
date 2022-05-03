@@ -22,7 +22,8 @@ namespace NorthWindAPI.Controllers
         public IActionResult GetAllCustomers([FromQuery] CustomerParameters filter)
         {
             filter.Collection = _customerService.GetAllCustomers();
-            return Ok(filter.ResultProcessing());
+            string response = filter.ResultProcessing();
+            return filter.IsSuccess? Ok(response) : NotFound(response);
         }
 
         // GET api/customers/anton
@@ -102,7 +103,8 @@ namespace NorthWindAPI.Controllers
         public IActionResult GetOrdersByCustomerId(string id, [FromQuery] OrderParameters filter)
         {
             filter.Collection = _customerService.GetOrdersByCustomerId(id);
-            return Ok(filter.ResultProcessing());
+            string response = filter.ResultProcessing();
+            return filter.IsSuccess? Ok(response) : NotFound(response);
         }
 
         // POST api/customers/
