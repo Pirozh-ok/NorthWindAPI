@@ -4,7 +4,7 @@ namespace NorthWindAPI.Services.Interfaces
 {
     public interface IOrderService
     {
-        IEnumerable<Order> GetAllOrders();
+        IQueryable<Order> GetAllOrders();
         IEnumerable<Order> GetAllOrdersWithDetails();
         Order GetOrderById(int id);
         IEnumerable<Order> GetOrdersByCustomer(string customerId);

@@ -8,11 +8,11 @@ namespace NorthWindAPI.Controllers
 {
     [Route("api/customers/")]
     [ApiController]
-    public class CustomersController: ControllerBase
+    public class CustomerController: ControllerBase
     {
         private readonly ICustomerService _customerService;
         private readonly string _notFoundMessage = "Ничего не найдено";
-        public CustomersController(ICustomerService customerService)
+        public CustomerController(ICustomerService customerService)
         {
             _customerService = customerService;
         }
@@ -114,7 +114,7 @@ namespace NorthWindAPI.Controllers
             try
             {
                 if (customer is null)
-                    BadRequest("Передано пустое значение");
+                    return BadRequest("Передано пустое значение");
 
                 _customerService.CreateCustomer(customer);
                 return StatusCode(201);
@@ -132,7 +132,7 @@ namespace NorthWindAPI.Controllers
             try
             {
                 if (customer is null)
-                    BadRequest("Передано пустое значение");
+                    return BadRequest("Передано пустое значение");
 
                 _customerService.UpdateCustomer(customer);
                 return StatusCode(204);

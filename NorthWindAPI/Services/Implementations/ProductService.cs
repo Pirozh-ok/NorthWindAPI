@@ -35,14 +35,28 @@ namespace NorthWindAPI.Services.Implementations
 
         public Product GetProductById(int id)
         {
-            return _context.Products
+            var product =  _context.Products
                 .SingleOrDefault(p => p.ProductId == id);
+
+            if(product is null)
+            {
+                throw new Exception("Продукт не найден!");
+            }
+
+            return product;
         }
 
         public Product GetProductByName(string name)
         {
-            return _context.Products
+            var product =  _context.Products
                 .SingleOrDefault(p => p.ProductName == name);
+
+            if (product is null)
+            {
+                throw new Exception("Продукт не найден!");
+            }
+
+            return product;
         }
 
         public void UpdateProduct(Product product)
@@ -53,14 +67,7 @@ namespace NorthWindAPI.Services.Implementations
                 throw new ArgumentNullException("Передано пустое значение");
             }
 
-            var updateToProduct = _context.Products
-                .SingleOrDefault(p => p.ProductId == product.ProductId);
-
-            if (updateToProduct is null)
-            {
-                throw new Exception("Пользователь не найден");
-            }
-
+            var updateToProduct = GetProductById(product.ProductId);
             updateToProduct.ProductName = product.ProductName;
             updateToProduct.UnitPrice = product.UnitPrice;
             updateToProduct.OrderDetails = product.OrderDetails;

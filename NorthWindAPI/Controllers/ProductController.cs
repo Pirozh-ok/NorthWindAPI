@@ -30,36 +30,30 @@ namespace NorthWindAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult GetProductById(int id, [FromQuery] string? format)
         {
-            var product = _productService.GetProductById(id);
-
-            if (format == "xml")
+            try
             {
-                return product is null ?
-                    NotFound(Converter.ToXml(_notFoundMessage)) :
-                 Ok(Converter.ToXml(product));
+                var product = _productService.GetProductById(id);
+                return format == "xml" ? Ok(Converter.ToXml(product)) : Ok(Converter.ToJson(product));
             }
-
-            return product is null ?
-                NotFound(Converter.ToJson(_notFoundMessage)) :
-                Ok(Converter.ToJson(product));
+            catch (Exception ex)
+            {
+                return format == "xml" ? NotFound(Converter.ToXml(_notFoundMessage)) : NotFound(Converter.ToJson(_notFoundMessage));
+            }
         }
 
         // GET api/products/name/Chai
         [HttpGet("name/{name}")]
         public IActionResult GetProductByName(string name, [FromQuery] string? format)
         {
-            var product = _productService.GetProductByName(name);
-
-            if (format == "xml")
+            try
             {
-                return product is null ?
-                    NotFound(Converter.ToXml(_notFoundMessage)) :
-                 Ok(Converter.ToXml(product));
+                var product = _productService.GetProductByName(name);
+                return format == "xml" ? Ok(Converter.ToXml(product)) : Ok(Converter.ToJson(product));
             }
-
-            return product is null ?
-                NotFound(Converter.ToJson(_notFoundMessage)) :
-                Ok(Converter.ToJson(product));
+            catch (Exception ex)
+            {
+                return format == "xml" ? NotFound(Converter.ToXml(_notFoundMessage)) : NotFound(Converter.ToJson(_notFoundMessage));
+            }
         }
 
         // POST api/products/
@@ -69,7 +63,7 @@ namespace NorthWindAPI.Controllers
             try
             {
                 if (product is null)
-                    BadRequest("Передано пустое значение");
+                    return BadRequest("Передано пустое значение");
 
                 _productService.CreateProduct(product);
                 return StatusCode(201);
@@ -87,7 +81,7 @@ namespace NorthWindAPI.Controllers
             try
             {
                 if (product is null)
-                    BadRequest("Передано пустое значение");
+                    return BadRequest("Передано пустое значение");
 
                 _productService.UpdateProduct(product);
                 return StatusCode(204);

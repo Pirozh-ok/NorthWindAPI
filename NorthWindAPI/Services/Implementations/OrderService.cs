@@ -29,10 +29,9 @@ namespace NorthWindAPI.Services.Implementations
             _context.SaveChanges();
         }
 
-        public IEnumerable<Order> GetAllOrders()
+        public IQueryable<Order> GetAllOrders()
         {
-            return _context.Orders
-                .ToList();
+            return _context.Orders;
         }
 
         public IEnumerable<Order> GetAllOrdersWithDetails()
@@ -45,12 +44,12 @@ namespace NorthWindAPI.Services.Implementations
 
         public Order GetOrderById(int id)
         {
-            var order = _context.Orders
+            var order =  _context.Orders
                 .SingleOrDefault(o => o.OrderId == id);
 
             if(order is null)
             {
-                throw new Exception("Заказ не найден");
+                throw new Exception("Заказ не найден!");
             }
 
             return order;
