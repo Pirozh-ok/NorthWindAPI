@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NorthWindAPI.Models;
 using NorthWindAPI.Paginations;
 using NorthWindAPI.Services.Interfaces;
 
@@ -16,31 +17,100 @@ namespace NorthWindAPI.Controllers
             _productService = productService;
         }
 
-        /*[HttpGet]
-        public IActionResult GetAllProduct([FromQuery] ProductPagination filter)
+        // GET api/products
+        [HttpGet]
+        public IActionResult GetAllProduct([FromQuery] ProductParameters filter)
         {
-            var validFilter = new QueryParameters()
+            filter.Collection = _productService.GetAllProducts();
+            string response = filter.ResultProcessing();
+            return filter.IsSuccess ? Ok(response) : NotFound(_notFoundMessage);
+        }
+
+        // GET api/products/1
+        [HttpGet("{id}")]
+        public IActionResult GetProductById(int id, [FromQuery] string? format)
+        {
+            var product = _productService.GetProductById(id);
+
+            if (format == "xml")
             {
-                PageNumber = filter.PageNumber,
-                PageSize = filter.PageSize
-            };
-
-            var products = _productService.GetAllProducts(filter);
-
-            if (filter.Sort == "desc")
-                products = products.OrderByDescending(p=>p.ProductName);
-            else products = products.OrderBy(p => p.ProductName);
-
-            if (filter.Format == "xml")
-            {
-                return products is null || products.Count() == 0 ?
+                return product is null ?
                     NotFound(Converter.ToXml(_notFoundMessage)) :
-                 Ok(Converter.ToXml(products.ToList()));
+                 Ok(Converter.ToXml(product));
             }
 
-            return products is null || products.Count() == 0 ?
-                 NotFound(Converter.ToJson(_notFoundMessage)) :
-                 Ok(Converter.ToJson(products.ToList()));
-        }*/
+            return product is null ?
+                NotFound(Converter.ToJson(_notFoundMessage)) :
+                Ok(Converter.ToJson(product));
+        }
+
+        // GET api/products/name/Chai
+        [HttpGet("name/{name}")]
+        public IActionResult GetProductByName(string name, [FromQuery] string? format)
+        {
+            var product = _productService.GetProductByName(name);
+
+            if (format == "xml")
+            {
+                return product is null ?
+                    NotFound(Converter.ToXml(_notFoundMessage)) :
+                 Ok(Converter.ToXml(product));
+            }
+
+            return product is null ?
+                NotFound(Converter.ToJson(_notFoundMessage)) :
+                Ok(Converter.ToJson(product));
+        }
+
+        // POST api/products/
+        [HttpPost]
+        public IActionResult CreateCustomer([FromBody] Product product)
+        {
+            try
+            {
+                if (product is null)
+                    BadRequest("Передано пустое значение");
+
+                _productService.CreateProduct(product);
+                return StatusCode(201);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // PUT api/products/
+        [HttpPut]
+        public IActionResult UpdateCustomer([FromBody] Product product)
+        {
+            try
+            {
+                if (product is null)
+                    BadRequest("Передано пустое значение");
+
+                _productService.UpdateProduct(product);
+                return StatusCode(204);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // DELETE api/product
+        [HttpDelete("{id}")]
+        public IActionResult DeleteCustomer(int id)
+        {
+            try
+            {
+                _productService.DeleteProduct(id);
+                return StatusCode(202);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

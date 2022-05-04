@@ -28,38 +28,21 @@ namespace NorthWindAPI.Services.Implementations
             _context.SaveChanges();
         }
 
-        public IEnumerable<Product> GetAllProducts(QueryParameters filter)
+        public IQueryable<Product> GetAllProducts()
         {
-            return _context.Products
-                            .Skip((filter.PageNumber - 1) * filter.PageSize)
-                            .Take(filter.PageSize)
-                            .ToList();
+            return _context.Products;
         }
 
         public Product GetProductById(int id)
         {
-            var product = _context.Products
+            return _context.Products
                 .SingleOrDefault(p => p.ProductId == id);
-
-            if (product is null)
-            {
-                throw new Exception("Продукт не найден");
-            }
-
-            return product;
         }
 
         public Product GetProductByName(string name)
         {
-            var product = _context.Products
+            return _context.Products
                 .SingleOrDefault(p => p.ProductName == name);
-
-            if (product is null)
-            {
-                throw new Exception("Продукт не найден");
-            }
-
-            return product;
         }
 
         public void UpdateProduct(Product product)
@@ -70,7 +53,8 @@ namespace NorthWindAPI.Services.Implementations
                 throw new ArgumentNullException("Передано пустое значение");
             }
 
-            var updateToProduct = _context.Products.SingleOrDefault(p => p.ProductId == product.ProductId);
+            var updateToProduct = _context.Products
+                .SingleOrDefault(p => p.ProductId == product.ProductId);
 
             if (updateToProduct is null)
             {

@@ -4,7 +4,7 @@ namespace NorthWindAPI.Services.Interfaces
 {
     public interface IProductService
     {
-        IEnumerable<Product> GetAllProducts(QueryParameters filter);
+        IQueryable<Product> GetAllProducts();
         Product GetProductById(int id);
         Product GetProductByName(string name);
         void CreateProduct(Product product);

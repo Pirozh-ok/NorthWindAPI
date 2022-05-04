@@ -154,7 +154,7 @@ namespace NorthWindAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(JsonConvert.SerializeObject(ex.Message));
+                return NotFound(ex.Message);
             }
         }
     }

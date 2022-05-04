@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NorthWindAPI.Models
+﻿namespace NorthWindAPI.Models
 {
     public partial class Product
     {

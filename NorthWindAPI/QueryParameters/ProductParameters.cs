@@ -4,12 +4,13 @@ namespace NorthWindAPI.Paginations
 {
     public class ProductParameters : QueryParameters
     {
-        public uint PriceMin { get; set; } = 0;
-        public uint PriceMax { get; set; } = uint.MaxValue;
+        public decimal PriceMin { get; set; } = 0;
+        public decimal PriceMax { get; set; } = decimal.MaxValue;
         public IQueryable<Product>? Collection { get; set; }
         public override void Filtering()
         {
-           Collection = Collection.Where(p => p.UnitPrice >= PriceMin && p.UnitPrice <= PriceMax);
+           Collection = Collection
+                .Where(p => p.UnitPrice >= PriceMin && p.UnitPrice <= PriceMax);
         }
 
         public override string Formatting()
