@@ -106,5 +106,36 @@ namespace NorthWindAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        [HttpGet("pricelist/")]
+        public IActionResult GetPriceList([FromQuery] string? format)
+        {        
+            try
+            {
+                var priceList = _productService.GetPriceList();
+                return format == "xml" ? Ok(Converter.ToXml(priceList)) : Ok(Converter.ToJson(priceList));
+            }
+            catch (Exception ex)
+            {
+                return format == "xml" ? NotFound(Converter.ToXml(_notFoundMessage)) : NotFound(Converter.ToJson(_notFoundMessage));
+            }
+        }
+
+        // GET api/products/stat
+        [HttpGet("stat")]
+        public IActionResult GetStat([FromQuery] int? maxYear, [FromQuery] int? minYear, [FromQuery] string? format)
+        {
+            var maxY = maxYear is null ? 3000 : (int)maxYear;
+            var minY = minYear is null ? 0 : (int)minYear;
+            try
+            {
+                var statistic = _productService.GetSalesStatistics(maxY, minY);
+                return format == "xml"? Ok(Converter.ToXml(statistic)) : Ok(Converter.ToJson(statistic));
+            }
+            catch
+            {
+                return NotFound(_notFoundMessage);
+            }
+        }
     }
 }

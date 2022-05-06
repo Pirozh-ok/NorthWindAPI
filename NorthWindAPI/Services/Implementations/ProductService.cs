@@ -1,4 +1,7 @@
-﻿using NorthWindAPI.Models;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using NorthWindAPI.DTOs;
+using NorthWindAPI.Models;
 using NorthWindAPI.Services.Interfaces;
 
 namespace NorthWindAPI.Services.Implementations
@@ -35,10 +38,10 @@ namespace NorthWindAPI.Services.Implementations
 
         public Product GetProductById(int id)
         {
-            var product =  _context.Products
+            var product = _context.Products
                 .SingleOrDefault(p => p.ProductId == id);
 
-            if(product is null)
+            if (product is null)
             {
                 throw new Exception("Продукт не найден!");
             }
@@ -48,7 +51,7 @@ namespace NorthWindAPI.Services.Implementations
 
         public Product GetProductByName(string name)
         {
-            var product =  _context.Products
+            var product = _context.Products
                 .SingleOrDefault(p => p.ProductName == name);
 
             if (product is null)
@@ -72,6 +75,48 @@ namespace NorthWindAPI.Services.Implementations
             updateToProduct.UnitPrice = product.UnitPrice;
             updateToProduct.OrderDetails = product.OrderDetails;
             _context.SaveChanges();
+        }
+
+        public IEnumerable<PriceList> GetPriceList()
+        {
+            var products = GetAllProducts();
+            var priceList = new List<PriceList>();
+            foreach (var product in products)
+            {
+                priceList.Add(
+                    new PriceList
+                    {
+                        ProductName = product.ProductName,
+                        Price = (decimal)product.UnitPrice
+                    });
+            }
+            return priceList;
+        }
+
+        public List<StaticSalesDTO> GetSalesStatistics(int maxYear, int minYear)
+        {
+            var products = _context.Products
+                .Include(p => p.OrderDetails
+                    .Where(od => od.Order.OrderDate.Value.Year >= minYear && od.Order.OrderDate.Value.Year <= maxYear))
+                .ThenInclude(od => od.Order)
+                .ToList();
+
+
+            if(products is null || products.Count < 1)
+            {
+                throw new Exception("Ничего не найдено");
+            }
+
+            var statistics = new List<StaticSalesDTO>();
+            foreach (var product in products)
+                statistics.Add(
+                    new StaticSalesDTO
+                    {
+                        ProductName = product.ProductName,
+                        SalesQuatity = product.OrderDetails.Count()
+                    });
+
+            return statistics;
         }
     }
 }

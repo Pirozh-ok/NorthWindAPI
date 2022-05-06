@@ -1,4 +1,5 @@
-﻿using NorthWindAPI.Models;
+﻿using NorthWindAPI.DTOs;
+using NorthWindAPI.Models;
 
 namespace NorthWindAPI.Services.Interfaces
 {
@@ -10,5 +11,7 @@ namespace NorthWindAPI.Services.Interfaces
         void CreateProduct(Product product);
         void UpdateProduct(Product product);
         void DeleteProduct(int id);
+        public IEnumerable<PriceList> GetPriceList();
+        public List<StaticSalesDTO> GetSalesStatistics(int maxYear, int minYear);
     }
 }
